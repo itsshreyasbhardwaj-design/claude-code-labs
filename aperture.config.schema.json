@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/itsshreyasbhardwaj-design/claude-code-labs/main/aperture.config.schema.json",
+  "title": "ApertureConfig",
+  "description": "Configuration schema for aperture.config.json, the config file written by `aperture init` and read by all Aperture commands.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "budgetTokens": {
+      "type": "number",
+      "description": "Estimated token budget for total ambient context. Used by reporters to flag when the scanned total exceeds this threshold.",
+      "default": 50000,
+      "minimum": 0
+    },
+    "ignore": {
+      "type": "array",
+      "description": "Glob patterns for files or directories to exclude from scanning across all built-in ContextSources.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "claudeMdWarnBytes": {
+      "type": "number",
+      "description": "Byte size threshold above which a CLAUDE.md file triggers an `aperture doctor` warning for being oversized.",
+      "default": 8000,
+      "minimum": 0
+    },
+    "estimator": {
+      "type": "string",
+      "description": "Identifier for the token estimation strategy to use. v1 ships one heuristic estimator; this field exists so alternative estimators can be introduced without changing the config shape.",
+      "default": "heuristic-chars-4"
+    },
+    "plugins": {
+      "type": "array",
+      "description": "npm package names or local file paths to third-party ContextSource plugins, loaded dynamically at scan time. A plugin that fails to load is skipped with a warning rather than aborting the scan.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  }
+}

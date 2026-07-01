@@ -1,0 +1,10 @@
+src
+test
+docs
+.github
+.changeset
+scripts
+*.config.ts
+tsconfig.json
+biome.json
+.gitignore

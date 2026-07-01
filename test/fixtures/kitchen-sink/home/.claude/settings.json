@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "headroom": {
+      "command": "headroom",
+      "args": ["mcp", "serve"],
+      "env": {
+        "HEADROOM_PROXY_URL": "http://127.0.0.1:6767"
+      }
+    }
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "echo hi" }] }
+    ]
+  },
+  "someFlag": true
+}

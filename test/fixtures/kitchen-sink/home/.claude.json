@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "acme": {
+      "command": "acme-mcp",
+      "args": ["serve"]
+    }
+  }
+}

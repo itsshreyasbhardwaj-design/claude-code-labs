@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Build & Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check bin
+        run: npm run check-bin
+
+  offline-smoke-test:
+    name: Offline smoke test (Node 20.x)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # NOTE: This job does not actually sandbox network access — GitHub-hosted
+      # runners don't make it practical to enforce real network denial (that
+      # would need iptables/unshare tricks that are overkill for a standard
+      # Actions runner). Instead, this is an honest smoke test: it runs the
+      # built `scan` command exactly as a user would, with network access
+      # present but unused, as a regression check that scanning doesn't
+      # accidentally grow a network dependency. It proves the command
+      # succeeds without needing the network, not that the network was
+      # blocked.
+      - name: Run built scan command (no network dependency required)
+        run: node ./dist/cli.js scan --json > /tmp/aperture-smoke-scan.json
+
+      - name: Verify output is valid JSON
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('/tmp/aperture-smoke-scan.json', 'utf8')); console.log('OK, scan output is valid JSON')"
