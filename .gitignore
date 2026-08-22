@@ -4,3 +4,13 @@ coverage
 *.log
 .DS_Store
 .aperture/local.json
+
+# Security hardening: secret-shaped files, none currently present
+.env*
+!.env.example
+*.pem
+*.key
+credentials*.json
+service-account*.json
+*.sqlite
+*.db
